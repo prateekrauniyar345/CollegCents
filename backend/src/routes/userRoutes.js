@@ -1,6 +1,6 @@
 // routes/userRoutes.js
 import express from 'express';
-import { getUsers, createUser, updateUser, authUser } from '../controllers/userController.js';
+import { getUsers, createUser, updateUser, authUser, deleteUser } from '../controllers/userController.js';
 
 const router = express.Router();
 
@@ -148,5 +148,26 @@ router.post('/auth', authUser);
  *         description: User not found
  */
 router.patch('/:id', updateUser);
+
+/**
+ * @swagger
+ * /api/users/{id}:
+ *   delete:
+ *     summary: Delete an existing user
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The user id
+ *     responses:
+ *       200:
+ *         description: The user was successfully deleted
+ *       404:
+ *         description: User not found
+ */
+router.delete('/:id', deleteUser);
 
 export default router;
