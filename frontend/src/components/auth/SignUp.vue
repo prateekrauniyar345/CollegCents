@@ -1,10 +1,10 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import { useRouter } from 'vue-router'
-import { loginWithPopup } from '../../auth/msalConfig'
 import { setAccount } from '../../auth/authStore'
 
 const router = useRouter()
+const msalInstance = inject('msal')
 
 const loading = ref(false)
 const error = ref(null)
@@ -16,7 +16,7 @@ async function handleSignUp() {
   error.value = null
 
   try {
-    const response = await loginWithPopup()
+    const response = await msalInstance.loginPopup()
 
     if (response?.account) {
       setAccount(response.account)

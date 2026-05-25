@@ -4,6 +4,7 @@ import Home from '../pages/Home.vue'
 import SignInPage from '../pages/SignInPage.vue'
 import SignUpPage from '../pages/SignUpPage.vue'
 import Dashboard from '../pages/Dashboard.vue'
+import AuthRedirect from '../pages/AuthRedirect.vue'
 
 const routes = [
   {
@@ -29,7 +30,12 @@ const routes = [
     path: '/dashboard',
     name: 'dashboard',
     component: Dashboard
-  } 
+  }, 
+  {
+    path: '/auth/callback',
+    name: 'auth-callback',
+    component: AuthRedirect
+  }
 
 ]
 
