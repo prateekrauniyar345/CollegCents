@@ -6,7 +6,7 @@ const msalConfig = {
     authority: `https://login.microsoftonline.com/${import.meta.env.VITE_AZURE_TENANT_ID}`,
     redirectUri: import.meta.env.VITE_AZURE_REDIRECT_URI,
     postLogoutRedirectUri: import.meta.env.VITE_AZURE_POST_LOGOUT_REDIRECT_URI,
-    navigateToLoginRequestUrl: true,
+    navigateToLoginRequestUrl: false,
   },
 
   cache: {
@@ -16,7 +16,8 @@ const msalConfig = {
 
   system: {
     loggerOptions: {
-      loggerCallback: (level, message) => {
+      loggerCallback: (level, message, containsPii) => {
+        if (containsPii) return;
 
         switch (level) {
           case LogLevel.Error:
@@ -31,10 +32,9 @@ const msalConfig = {
           case LogLevel.Warning:
             console.warn(message);
             break;
-          default:
-            break;
         }
       },
+      piiLoggingEnabled: false,
     },
     windowHashTimeout: 60000,
     iframeHashTimeout: 6000,
@@ -43,14 +43,13 @@ const msalConfig = {
 };
 
 const loginRequest = {
-  scopes: [
-    "User.Read"
- ],
+  scopes: ["User.Read"],
 };
 
 let msalInstance = null;
 let isInitialized = false;
 let initializePromise = null;
+let interactionInProgress = false;
 
 function getMsalInstance() {
   if (!msalInstance) {
@@ -77,5 +76,31 @@ async function initializeMsal() {
   return initializePromise;
 }
 
+async function loginWithPopup() {
+  if (interactionInProgress) {
+    throw new Error("Login is already in progress.");
+  }
 
-export { msalConfig, getMsalInstance, initializeMsal, loginRequest };
+  interactionInProgress = true;
+
+  try {
+    const instance = getMsalInstance();
+    const response = await instance.loginPopup(loginRequest);
+
+    if (response?.account) {
+      instance.setActiveAccount(response.account);
+    }
+
+    return response;
+  } finally {
+    interactionInProgress = false;
+  }
+}
+
+export {
+  msalConfig,
+  getMsalInstance,
+  initializeMsal,
+  loginRequest,
+  loginWithPopup,
+};

@@ -1,11 +1,26 @@
 <script setup>
-import authStore from '../auth/authStore'
+import authStore, { clearAccount } from '../auth/authStore'
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { getMsalInstance } from '../auth/msalConfig'
 
 const account = computed(() => authStore.account)
+const router = useRouter()
 
-function handleLogout() {
-//   we will handle logout here
+async function handleLogout() {
+  try {
+    const instance = getMsalInstance()
+    const accounts = instance.getAllAccounts()
+    const currentAccount = accounts.length ? accounts[0] : null
+    if (currentAccount) {
+      try { await instance.logoutPopup({ account: currentAccount }) } catch (e) { try { await instance.logoutRedirect({ account: currentAccount }) } catch (_) {} }
+    }
+    clearAccount()
+    router.push('/signin')
+  } catch (e) {
+    // ignore or show error later
+    router.push('/signin')
+  }
 }
 </script>
 

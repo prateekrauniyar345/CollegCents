@@ -7,7 +7,6 @@ import { initializeMsal, getMsalInstance } from "./auth/msalConfig";
 
 async function bootstrap() {
   await initializeMsal();
-
   const app = createApp(App);
 
   app.use(router);
