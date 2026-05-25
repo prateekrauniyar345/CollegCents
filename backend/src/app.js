@@ -4,10 +4,14 @@ import dotenv from 'dotenv';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpecs from './config/swagger.js';
 import userRoutes from './routes/userRoutes.js';
+import { initDB } from './config/db.js';
 
 dotenv.config();
 
 const app = express();
+
+// Initialize Database
+initDB();
 
 // Middleware
 app.use(cors());

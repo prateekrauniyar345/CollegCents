@@ -1,5 +1,6 @@
+// routes/userRoutes.js
 import express from 'express';
-import { getUsers, createUser, updateUser } from '../controllers/userController.js';
+import { getUsers, createUser, updateUser, authUser } from '../controllers/userController.js';
 
 const router = express.Router();
 
@@ -9,35 +10,47 @@ const router = express.Router();
  *   schemas:
  *     User:
  *       type: object
- *       required:
- *         - name
- *         - email
  *       properties:
  *         id:
  *           type: integer
- *           description: The auto-generated id of the user
- *         name:
+ *           description: Auto-generated internal DB id
+ *         provider:
  *           type: string
- *           description: The name of the user
+ *           description: Auth provider (e.g. microsoft)
+ *         providerUserId:
+ *           type: string
+ *           description: The unique OID from Microsoft
+ *         homeAccountId:
+ *           type: string
+ *           description: The MSAL home account ID
+ *         tenantId:
+ *           type: string
+ *           description: The Microsoft Tenant ID
  *         email:
  *           type: string
- *           description: The email of the user
+ *           description: User's email
+ *         name:
+ *           type: string
+ *           description: User's full name
+ *         role:
+ *           type: string
+ *           description: Role in the app (e.g. user, admin)
  *         createdAt:
  *           type: string
  *           format: date-time
- *           description: The date the user was created
- *       example:
- *         id: 1
- *         name: Azhar
- *         email: azhar@example.com
- *         createdAt: 2026-05-24T12:00:00.000Z
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *         lastLoginAt:
+ *           type: string
+ *           format: date-time
  */
 
 /**
  * @swagger
  * tags:
  *   name: Users
- *   description: The users managing API
+ *   description: User management API
  */
 
 /**
@@ -55,16 +68,15 @@ const router = express.Router();
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/User'
- *       500:
- *         description: Server error
  */
 router.get('/', getUsers);
 
 /**
  * @swagger
- * /api/users:
+ * /api/users/auth:
  *   post:
- *     summary: Create a new user
+ *     summary: Authenticate and sync a Microsoft user
+ *     description: Upserts a user in the database based on their Microsoft identity. Updates lastLoginAt if they already exist, creates a new record if they don't.
  *     tags: [Users]
  *     requestBody:
  *       required: true
@@ -73,27 +85,35 @@ router.get('/', getUsers);
  *           schema:
  *             type: object
  *             required:
- *               - name
+ *               - providerUserId
  *               - email
  *             properties:
- *               name:
+ *               providerUserId:
+ *                 type: string
+ *                 description: OID from Microsoft payload
+ *               homeAccountId:
+ *                 type: string
+ *               tenantId:
  *                 type: string
  *               email:
  *                 type: string
+ *               name:
+ *                 type: string
  *             example:
- *               name: Jane Doe
- *               email: jane@example.com
+ *               providerUserId: "c14163a9-2e0a-45ee-9a6c-71a32c476292"
+ *               homeAccountId: "00000000-0000-0000-ed9c-582e8c8cd057.9188040d-6c67-4c5b-b112-36a304b66dad"
+ *               tenantId: "23d82046-7e7d-4cf9-8efd-8012ec1d7a7c"
+ *               email: "prateekrauniyar345@gmail.com"
+ *               name: "Pratik Rauniyar"
  *     responses:
- *       201:
- *         description: The user was successfully created
+ *       200:
+ *         description: User authenticated successfully
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
- *       400:
- *         description: Bad request
  */
-router.post('/', createUser);
+router.post('/auth', authUser);
 
 /**
  * @swagger
@@ -119,19 +139,13 @@ router.post('/', createUser);
  *                 type: string
  *               email:
  *                 type: string
- *             example:
- *               name: Jane Smith
+ *               role:
+ *                 type: string
  *     responses:
  *       200:
  *         description: The user was successfully updated
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
  *       404:
  *         description: User not found
- *       400:
- *         description: Bad request
  */
 router.patch('/:id', updateUser);
 
