@@ -4,23 +4,24 @@ import { computed, inject } from 'vue'
 import { useRouter } from 'vue-router'
 
 
-const account = computed(() => authStore.account)
-const router = useRouter()
-const msalInstance = inject('msal')
+const account = computed(() => authStore.account);
+console.log("Current account in Home.vue:", account.value);
+const router = useRouter();
+const msalInstance = inject('msal');
 
 async function handleLogout() {
   try {
-    const instance = msalInstance
-    const accounts = instance.getAllAccounts()
-    const currentAccount = accounts.length ? accounts[0] : null
+    const instance = msalInstance;
+    const accounts = instance.getAllAccounts();
+    const currentAccount = accounts.length ? accounts[0] : null;
     if (currentAccount) {
-      try { await instance.logoutPopup({ account: currentAccount }) } catch (e) { try { await instance.logoutRedirect({ account: currentAccount }) } catch (_) {} }
+      try { await instance.logoutPopup({ account: currentAccount }) } catch (e) { try { await instance.logoutRedirect({ account: currentAccount }) } catch (_) {} };
     }
-    clearAccount()
-    router.push('/signin')
+    clearAccount();
+    router.push('/signin');
   } catch (e) {
     // ignore or show error later
-    router.push('/signin')
+    router.push('/signin');
   }
 }
 </script>
