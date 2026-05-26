@@ -21,7 +21,7 @@ export const getUsers = async (req, res) => {
 
 export const authUser = async (req, res) => {
   try {
-    const { providerUserId, homeAccountId, tenantId, email, name } = req.body;
+    const { providerUserId, tenantId, email, name } = req.body;
 
     if (!providerUserId || !tenantId) {
       return res.status(400).json({
@@ -32,7 +32,6 @@ export const authUser = async (req, res) => {
 
     const user = await UserService.upsertMicrosoftUser({
       providerUserId,
-      homeAccountId,
       tenantId,
       email,
       name,

@@ -1,40 +1,53 @@
+// src/components/auth/SignIn.vue
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { setAccount } from '../../auth/authStore'
-import { inject } from 'vue'
+import { ref, inject } from 'vue';
+import { useRouter } from 'vue-router';
+import { setAccount, setCurrentUser } from '../../auth/authStore';
+import User from '../../models/user';
+import { checkUserloginWithMicrosoft } from '../../api/authApi';
+import authStore from '../../auth/authStore';
 
 const router = useRouter()
-const msalInstance = inject('msal')
+const msalInstance = inject('msal');
 
-const loading = ref(false)
-const error = ref(null)
+const loading = ref(false);
+const error = ref(null);
 
 async function handleSignIn() {
-  if (loading.value) return
+  if (loading.value) return;
 
-  loading.value = true
-  error.value = null
+  loading.value = true;
+  error.value = null;
 
   try {
-    const response = await msalInstance.loginPopup()
+    const response = await msalInstance.loginPopup();
 
-    if (response?.account) {
-      setAccount(response.account)
+    if (!response?.account) {
+      error.value = 'Microsoft login failed. No account returned.';
+      return;
     }
-
-    router.push('/home')
+    setAccount(response.account);
+    const user = User.fromMicrosoftPayload(response.account);
+    const currentUser = await checkUserloginWithMicrosoft(user); 
+    const currentUserObj = currentUser ? new User(currentUser.user) : null;
+    if (!currentUserObj) {
+      error.value = 'Failed to create or fetch user.';
+      return;
+    }
+    setCurrentUser(currentUserObj);
+    router.push('/home');
   } catch (e) {
-    console.error('Sign in failed:', e)
+    console.error('Sign in failed:', e);
 
     if (e.errorCode === 'interaction_in_progress') {
-      error.value = 'A sign-in window is already open. Please complete or close it first.'
+      error.value = 'A sign-in window is already open. Please complete or close it first.';
     } else {
-      error.value = e.message || String(e)
+      error.value = e.message || String(e);
     }
   } finally {
-    loading.value = false
+    loading.value = false;
   }
+
 }
 </script>
 

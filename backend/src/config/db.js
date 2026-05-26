@@ -23,7 +23,6 @@ export const initDB = async () => {
             provider VARCHAR(50) NOT NULL DEFAULT 'microsoft',
             provider_user_id VARCHAR(255) NOT NULL,
             tenant_id VARCHAR(255) NOT NULL,
-            home_account_id VARCHAR(255),
             email VARCHAR(255),
             name VARCHAR(255),
             role VARCHAR(50) DEFAULT 'user',

@@ -12,7 +12,6 @@ model User {
   provider       String    @default("microsoft")
   providerUserId String    @map("provider_user_id")
   tenantId       String    @map("tenant_id")
-  homeAccountId  String?   @map("home_account_id")
   email          String?
   name           String?
   role           String    @default("user")

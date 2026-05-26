@@ -26,7 +26,6 @@ class UserService {
       update: {
         email: userObject.email,
         name: userObject.name,
-        homeAccountId: userObject.homeAccountId,
         lastLoginAt: new Date(),
       },
       create: userObject.toCreateData(),

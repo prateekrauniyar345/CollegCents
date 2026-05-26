@@ -15,6 +15,22 @@ const options = {
         description: 'Development server',
       },
     ],
+
+
+    // This controls the order shown in Swagger UI
+    tags: [
+      {
+        name: 'Auth',
+        description: 'Authentication API',
+      },
+      {
+        name: 'Users',
+        description: 'User management API',
+      },
+    ],
+
+
+    
   },
   apis: ['./src/routes/*.js', './src/models/*.js'], // Path to the API docs
 };
