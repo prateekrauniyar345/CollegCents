@@ -17,7 +17,7 @@ import Notifications from '../pages/Notifications.vue'
 const routes = [
   {
     path: '/',
-    redirect: '/home/overview'
+    redirect: '/dashboard'
   },
   {
     path: '/signin',
@@ -88,7 +88,7 @@ const router = createRouter({
 
 router.beforeEach((to, from) => {
   // Protect all /home routes
-  if (to.path.startsWith('/home')) {
+  if (to.path.toLowerCase().startsWith('/home')) {
     if (!authStore.account) {
       return '/signin'
     }

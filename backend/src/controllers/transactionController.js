@@ -22,9 +22,27 @@ const validateTransactionData = (data) => {
 
 
 // it will help us to get the trasaction based on passed query filters
+export const getTransactionSummary = async (req, res) => {
+  try {
+    const { userId } = req.query;
+    if (!userId) {
+      return res.status(400).json({ success: false, message: "userId is required." });
+    }
+
+    const summary = await TransactionService.getTransactionSummary(userId);
+
+    return res.status(200).json({
+      success: true,
+      data: summary
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Error retrieving transaction summary", error: error.message });
+  }
+};
+
 export const getTransactions = async (req, res) => {
   try {
-    const { userId, startDate, endDate, direction, category, type } = req.query;
+    const { userId, startDate, endDate, direction, category, type, limit } = req.query;
     
     const transactions = await TransactionService.getAllTransactions({
       userId,
@@ -32,7 +50,8 @@ export const getTransactions = async (req, res) => {
       endDate,
       direction,
       category,
-      type
+      type,
+      limit
     });
 
     return res.status(200).json({
@@ -60,7 +79,7 @@ export const createTransaction = async (req, res) => {
       return res.status(401).json({ success: false, message: "Unauthorized: userId is required" });
     }
 
-    const transaction = await TransactionService.createTransaction(req.body);
+    const transaction = await TransactionService.createTransaction(userId, req.body);
 
     return res.status(201).json({
       success: true,

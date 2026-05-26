@@ -1,6 +1,7 @@
 import express from 'express';
 import { 
   getTransactions, 
+  getTransactionSummary,
   createTransaction, 
   updateTransaction, 
   deleteTransaction 
@@ -141,6 +142,23 @@ router.get('/', getTransactions);
  */
 router.post('/', createTransaction);
 
+/**
+ * @swagger
+ * /api/transactions/summary:
+ *   get:
+ *     summary: Get transaction summary (spending, savings, balance)
+ *     tags: [Transactions]
+ *     parameters:
+ *       - in: query
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Summary object
+ */
+router.get('/summary', getTransactionSummary);
 
 /**
  * @swagger
