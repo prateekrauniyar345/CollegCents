@@ -52,24 +52,28 @@ async function handleSignIn() {
 </script>
 
 <template>
-  <div class="max-w-md mx-auto p-6 bg-white rounded-xl shadow-md">
-    <h2 class="text-2xl font-bold mb-4">Sign in</h2>
+  <div class="min-h-screen flex items-center justify-center bg-slate-50">
+    <div class="w-full max-w-md p-8 bg-white rounded-xl shadow-md">
+      <h2 class="text-2xl font-bold mb-4 text-center">Sign in</h2>
 
-    <p class="text-sm text-slate-600 mb-4">
-      Sign in with your Microsoft account.
-    </p>
+      <p class="text-sm text-slate-600 mb-6 text-center">
+        Sign in with your Microsoft account.
+      </p>
 
-    <button
-      @click="handleSignIn"
-      :disabled="loading"
-      class="w-full bg-blue-600 text-white py-2 rounded-lg disabled:opacity-60"
-    >
-      <span v-if="!loading">Sign in with Microsoft</span>
-      <span v-else>Signing in…</span>
-    </button>
+      <div class="mt-4 flex justify-center">
+        <button
+          @click="handleSignIn"
+          :disabled="loading"
+          class="w-full max-w-xs bg-blue-600 text-white py-2 rounded-lg disabled:opacity-60 text-center"
+        >
+          <span v-if="!loading">Sign in with Microsoft</span>
+          <span v-else>Signing in…</span>
+        </button>
+      </div>
 
-    <p v-if="error" class="text-red-500 mt-3">
-      {{ error }}
-    </p>
+      <p v-if="error" class="text-red-500 mt-3 text-center">
+        {{ error }}
+      </p>
+    </div>
   </div>
 </template>
