@@ -1,45 +1,46 @@
 <script setup>
-import authStore, { clearAccount } from '../auth/authStore'
-import { computed, inject } from 'vue'
+import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import authStore from '../auth/authStore'
 
+import HomeNavbar from '../components/home/HomeNavbar.vue'
+import HomeHeader from '../components/home/HomeHeader.vue'
+import BudgetUtilization from '../components/home/BudgetUtilization.vue'
+import RecurringPayments from '../components/home/RecurringPayments.vue'
+import BudgetCategoryCards from '../components/home/BudgetCategoryCards.vue'
 
-const account = computed(() => authStore.account);
-console.log("Current account in Home.vue:", account.value);
-const router = useRouter();
-const msalInstance = inject('msal');
+const router = useRouter()
 
-async function handleLogout() {
-  try {
-    const instance = msalInstance;
-    const accounts = instance.getAllAccounts();
-    const currentAccount = accounts.length ? accounts[0] : null;
-    if (currentAccount) {
-      try { await instance.logoutPopup({ account: currentAccount }) } catch (e) { try { await instance.logoutRedirect({ account: currentAccount }) } catch (_) {} };
-    }
-    clearAccount();
-    router.push('/signin');
-  } catch (e) {
-    // ignore or show error later
-    router.push('/signin');
+// Optional: Guard route
+onMounted(() => {
+  if (!authStore.account) {
+    // If you want strictly protected routes, uncomment the redirect.
+    // router.push('/signin')
   }
-}
+})
 </script>
 
 <template>
-  <div class="max-w-3xl mx-auto p-6">
-    <h1 class="text-3xl font-bold mb-4">Home</h1>
-    <div v-if="account">
-      <p><strong>Name:</strong> {{ account.name || account.username }}</p>
-      <p><strong>Email:</strong> {{ account.username }}</p>
-      <p><strong>Home Account ID:</strong> {{ account.homeAccountId }}</p>
-      <button @click="handleLogout" class="mt-4 bg-red-600 text-white px-4 py-2 rounded">Sign out</button>
-    </div>
-    <div v-else>
-      <p class="text-slate-600">You are not signed in.</p>
-    </div>
+  <div class="min-h-screen bg-cc-bg text-cc-main font-sans selection:bg-cc-primary-light selection:text-cc-primary-dark">
+    <!-- Global Navigation -->
+    <HomeNavbar />
+
+    <!-- Main Dashboard Container -->
+    <main class="max-w-[1400px] mx-auto px-6 mt-8">
+      <HomeHeader />
+
+      <!-- Top Row Metrics (60 / 40 Split) -->
+      <div class="flex flex-col lg:flex-row gap-6">
+        <div class="w-full lg:w-[60%]">
+          <BudgetUtilization />
+        </div>
+        <div class="w-full lg:w-[40%]">
+          <RecurringPayments />
+        </div>
+      </div>
+
+      <!-- Bottom Row Categories -->
+      <BudgetCategoryCards />
+    </main>
   </div>
 </template>
-
-<style scoped>
-</style>

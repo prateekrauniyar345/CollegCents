@@ -1,10 +1,66 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-sans: "Inter", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+:root {
+  /* Campus Cents Design Tokens */
+  --cc-bg: #F8F9FA;
+  --cc-surface: #FFFFFF;
+  
+  --cc-text-main: #06051A;
+  --cc-text-muted: #584D63;
+  
+  /* Primary Brand Colors */
+  --cc-primary: #22c55e; /* Vibrant Fresh Green */
+  --cc-primary-dark: #14532d; /* Deep Forest Green */
+  --cc-primary-light: #dcfce7;
+  
+  /* Status Colors */
+  --cc-status-healthy: #10b981; /* Mint Green */
+  --cc-status-warning: #f59e0b; /* Amber / Orange */
+  --cc-status-critical: #ef4444; /* Coral / Red */
+  
+  /* Layout */
+  --cc-radius: 16px;
+  --cc-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.05);
 }
 
 body {
-  background-color: #F8F9FA;
+  background-color: var(--cc-bg);
   font-family: var(--font-sans);
+  color: var(--cc-text-main);
+}
+
+/* Custom utility classes linking to variables */
+.bg-cc-bg { background-color: var(--cc-bg); }
+.bg-cc-surface { background-color: var(--cc-surface); }
+.bg-cc-primary { background-color: var(--cc-primary); }
+.bg-cc-primary-dark { background-color: var(--cc-primary-dark); }
+.bg-cc-primary-light { background-color: var(--cc-primary-light); }
+
+.text-cc-main { color: var(--cc-text-main); }
+.text-cc-muted { color: var(--cc-text-muted); }
+.text-cc-primary { color: var(--cc-primary); }
+.text-cc-primary-dark { color: var(--cc-primary-dark); }
+
+.rounded-cc { border-radius: var(--cc-radius); }
+.shadow-cc { box-shadow: var(--cc-shadow); }
+
+/* Status Utilities */
+.text-status-healthy { color: var(--cc-status-healthy); }
+.bg-status-healthy { background-color: var(--cc-status-healthy); }
+.text-status-warning { color: var(--cc-status-warning); }
+.bg-status-warning { background-color: var(--cc-status-warning); }
+.text-status-critical { color: var(--cc-status-critical); }
+.bg-status-critical { background-color: var(--cc-status-critical); }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
