@@ -1,6 +1,7 @@
 import TransactionService from "../services/transactionService.js";
 
 // Validation helper
+// it will help us to validat the data and its types before making any operations
 const validateTransactionData = (data) => {
   const { date, description, amount, direction } = data;
   
@@ -19,18 +20,14 @@ const validateTransactionData = (data) => {
   return null;
 };
 
+
+// it will help us to get the trasaction based on passed query filters
 export const getTransactions = async (req, res) => {
   try {
-    // TODO: Replace with req.user.id once auth middleware is implemented
-    const userId = req.query.userId || req.body.userId;
+    const { userId, startDate, endDate, direction, category, type } = req.query;
     
-    if (!userId) {
-      return res.status(401).json({ success: false, message: "Unauthorized: userId is required" });
-    }
-
-    const { startDate, endDate, direction, category, type } = req.query;
-    
-    const transactions = await TransactionService.getAllTransactions(userId, {
+    const transactions = await TransactionService.getAllTransactions({
+      userId,
       startDate,
       endDate,
       direction,
@@ -48,46 +45,22 @@ export const getTransactions = async (req, res) => {
   }
 };
 
-export const getTransaction = async (req, res) => {
-  try {
-    const { id } = req.params;
-    // TODO: Replace with req.user.id once auth middleware is implemented
-    const userId = req.query.userId || req.body.userId;
 
-    if (!userId) {
-      return res.status(401).json({ success: false, message: "Unauthorized: userId is required" });
-    }
-
-    const transaction = await TransactionService.getTransactionById(id, userId);
-
-    if (!transaction) {
-      return res.status(404).json({ success: false, message: "Transaction not found" });
-    }
-
-    return res.status(200).json({
-      success: true,
-      data: transaction.toJSON(),
-    });
-  } catch (error) {
-    return res.status(500).json({ success: false, message: "Error retrieving transaction", error: error.message });
-  }
-};
 
 export const createTransaction = async (req, res) => {
   try {
-    // TODO: Replace with req.user.id once auth middleware is implemented
-    const userId = req.body.userId;
-
-    if (!userId) {
-      return res.status(401).json({ success: false, message: "Unauthorized: userId is required" });
-    }
-
     const validationError = validateTransactionData(req.body);
     if (validationError) {
       return res.status(400).json({ success: false, message: validationError });
     }
 
-    const transaction = await TransactionService.createTransaction(userId, req.body);
+    // Check if userId is provided in the body (for now, until we implement auth middleware)
+    const userId = req.body.userId;
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized: userId is required" });
+    }
+
+    const transaction = await TransactionService.createTransaction(req.body);
 
     return res.status(201).json({
       success: true,
@@ -99,42 +72,7 @@ export const createTransaction = async (req, res) => {
   }
 };
 
-export const importTransactions = async (req, res) => {
-  try {
-    // TODO: Replace with req.user.id once auth middleware is implemented
-    const userId = req.body.userId;
 
-    if (!userId) {
-      return res.status(401).json({ success: false, message: "Unauthorized: userId is required" });
-    }
-
-    const { transactions } = req.body;
-
-    if (!transactions || !Array.isArray(transactions) || transactions.length === 0) {
-      return res.status(400).json({ success: false, message: "A non-empty array of transactions is required." });
-    }
-
-    // Validate all items before inserting
-    for (let i = 0; i < transactions.length; i++) {
-      const error = validateTransactionData(transactions[i]);
-      if (error) {
-        return res.status(400).json({ success: false, message: `Validation failed at index ${i}: ${error}` });
-      }
-    }
-
-    const count = await TransactionService.createManyTransactions(userId, transactions);
-
-    // Fetch the newly created transactions (optional, could just return the count)
-    // For simplicity, we just return the count as requested by the expected payload.
-    return res.status(201).json({
-      success: true,
-      message: "Transactions imported successfully",
-      count,
-    });
-  } catch (error) {
-    return res.status(500).json({ success: false, message: "Error importing transactions", error: error.message });
-  }
-};
 
 export const updateTransaction = async (req, res) => {
   try {

@@ -1,9 +1,7 @@
 import express from 'express';
 import { 
   getTransactions, 
-  getTransaction, 
   createTransaction, 
-  importTransactions, 
   updateTransaction, 
   deleteTransaction 
 } from '../controllers/transactionController.js';
@@ -100,28 +98,7 @@ const router = express.Router();
  */
 router.get('/', getTransactions);
 
-/**
- * @swagger
- * /api/transactions/{id}:
- *   get:
- *     summary: Get a specific transaction by ID
- *     tags: [Transactions]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *       - in: query
- *         name: userId
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Transaction details
- */
-router.get('/:id', getTransaction);
+
 
 /**
  * @swagger
@@ -164,53 +141,6 @@ router.get('/:id', getTransaction);
  */
 router.post('/', createTransaction);
 
-/**
- * @swagger
- * /api/transactions/import:
- *   post:
- *     summary: Import multiple transactions
- *     tags: [Transactions]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - userId
- *               - transactions
- *             properties:
- *               userId:
- *                 type: integer
- *               transactions:
- *                 type: array
- *                 items:
- *                   type: object
- *                   required:
- *                     - date
- *                     - description
- *                     - amount
- *                     - direction
- *                   properties:
- *                     date:
- *                       type: string
- *                       format: date
- *                     description:
- *                       type: string
- *                     amount:
- *                       type: number
- *                     direction:
- *                       type: string
- *                       enum: [debit, credit]
- *                     type:
- *                       type: string
- *                     category:
- *                       type: string
- *     responses:
- *       201:
- *         description: Transactions imported successfully
- */
-router.post('/import', importTransactions);
 
 /**
  * @swagger

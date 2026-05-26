@@ -2,23 +2,24 @@ import prisma from "../config/prisma.js";
 import Transaction from "../models/Transaction.js";
 
 class TransactionService {
-  static async getAllTransactions(userId, filters = {}) {
+  static async getAllTransactions(filters = {}) {
+    const { userId, startDate, endDate, direction, category, type } = filters;
     const where = { userId: BigInt(userId) };
 
-    if (filters.startDate || filters.endDate) {
+    if (startDate || endDate) {
       where.date = {};
-      if (filters.startDate) where.date.gte = new Date(filters.startDate);
-      if (filters.endDate) where.date.lte = new Date(filters.endDate);
+      if (startDate) where.date.gte = new Date(startDate);
+      if (endDate) where.date.lte = new Date(endDate);
     }
     
-    if (filters.direction) where.direction = filters.direction;
-    if (filters.category) where.category = filters.category;
-    if (filters.type) where.type = filters.type;
+    if (direction) where.direction = direction;
+    if (category) where.category = category;
+    if (type) where.type = type;
 
     const transactions = await prisma.transaction.findMany({
       where,
       orderBy: { date: "desc" },
-    });
+    }); 
 
     return transactions.map((t) => Transaction.fromPrisma(t));
   }
@@ -42,18 +43,6 @@ class TransactionService {
     });
 
     return Transaction.fromPrisma(transaction);
-  }
-
-  static async createManyTransactions(userId, transactionsData) {
-    const data = transactionsData.map((t) =>
-      new Transaction({ ...t, userId }).toCreateData()
-    );
-
-    const result = await prisma.transaction.createMany({
-      data,
-    });
-
-    return result.count;
   }
 
   static async updateTransaction(id, userId, data) {
