@@ -19,6 +19,29 @@ model User {
   updatedAt      DateTime  @updatedAt @map("updated_at")
   lastLoginAt    DateTime? @map("last_login_at")
 
+  transactions   Transaction[]
+
   @@unique([provider, tenantId, providerUserId], name: "unique_provider_user")
   @@map("users")
+}
+
+model Transaction {
+  id          BigInt   @id @default(autoincrement())
+  userId      BigInt   @map("user_id")
+
+  date        DateTime
+  description String   @db.Text
+  amount      Decimal  @db.Decimal(10, 2)
+  direction   String   // debit or credit
+  type        String?  // DEBIT_CARD, ACH_CREDIT, QUICKPAY_DEBIT, etc.
+  category    String?  // Groceries, Rent, Food, Income, etc.
+
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([date])
+  @@map("transactions")
 }
