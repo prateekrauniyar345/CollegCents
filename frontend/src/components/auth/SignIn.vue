@@ -35,7 +35,7 @@ async function handleSignIn() {
       return;
     }
     setCurrentUser(currentUserObj);
-    router.push('/home');
+    router.push('/home/overview');
   } catch (e) {
     console.error('Sign in failed:', e);
 

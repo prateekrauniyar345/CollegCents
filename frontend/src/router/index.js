@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import authStore from '../auth/authStore'
 
 import Home from '../pages/Home.vue'
 import SignInPage from '../pages/SignInPage.vue'
@@ -16,7 +17,7 @@ import Notifications from '../pages/Notifications.vue'
 const routes = [
   {
     path: '/',
-    redirect: '/dashboard'
+    redirect: '/home/overview'
   },
   {
     path: '/signin',
@@ -29,11 +30,6 @@ const routes = [
     component: SignUpPage
   },
   {
-    path: '/home',
-    name: 'home',
-    component: Home
-  },
-  {
     path: '/dashboard',
     name: 'dashboard',
     component: Dashboard
@@ -44,37 +40,42 @@ const routes = [
     component: AuthRedirect
   },
   {
-    path: '/overview',
+    path: '/home',
+    name: 'home',
+    component: Home
+  },
+  {
+    path: '/home/overview',
     name: 'overview',
     component: Overview
   },
   {
-    path: '/transactions',
+    path: '/home/transactions',
     name: 'transactions',
     component: Transactions
   },
   {
-    path: '/accounts',
+    path: '/home/accounts',
     name: 'accounts',
     component: Accounts
   },
   {
-    path: '/analytics',
+    path: '/home/analytics',
     name: 'analytics',
     component: Analytics
   },
   {
-    path: '/reports',
+    path: '/home/reports',
     name: 'reports',
     component: Reports
   },
   {
-    path: '/settings',
+    path: '/home/settings',
     name: 'settings',
     component: Settings
   },
   {
-    path: '/notifications',
+    path: '/home/notifications',
     name: 'notifications',
     component: Notifications
   }
@@ -83,6 +84,16 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes
+})
+
+router.beforeEach((to, from) => {
+  // Protect all /home routes
+  if (to.path.startsWith('/home')) {
+    if (!authStore.account) {
+      return '/signin'
+    }
+  }
+  return true
 })
 
 export default router

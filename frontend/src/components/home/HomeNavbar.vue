@@ -28,12 +28,12 @@ async function handleLogout() {
 }
 
 const navLinks = [
-  { name: 'Overview', path: '/overview' },
-  { name: 'Transactions', path: '/transactions' },
-  { name: 'Accounts', path: '/accounts' },
+  { name: 'Overview', path: '/home/overview' },
+  { name: 'Transactions', path: '/home/transactions' },
+  { name: 'Accounts', path: '/home/accounts' },
   { name: 'Budgets', path: '/home' },
-  { name: 'Analytics', path: '/analytics' },
-  { name: 'Reports', path: '/reports' }
+  { name: 'Analytics', path: '/home/analytics' },
+  { name: 'Reports', path: '/home/reports' }
 ]
 </script>
 
@@ -68,10 +68,10 @@ const navLinks = [
 
       <!-- Right: Global Utility Actions -->
       <div class="flex items-center space-x-5">
-        <router-link to="/settings" class="text-cc-muted hover:text-cc-main transition-colors">
+        <router-link to="/home/settings" class="text-cc-muted hover:text-cc-main transition-colors">
           <Settings class="w-5 h-5" />
         </router-link>
-        <router-link to="/notifications" class="relative text-cc-muted hover:text-cc-main transition-colors">
+        <router-link to="/home/notifications" class="relative text-cc-muted hover:text-cc-main transition-colors">
           <Bell class="w-5 h-5" />
           <!-- Red Badge Indicator -->
           <span class="absolute top-0 right-0 w-2 h-2 bg-status-critical rounded-full border-2 border-white"></span>
